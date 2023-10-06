@@ -4,12 +4,15 @@ import {
   type Session,
   createClientComponentClient,
 } from "@supabase/auth-helpers-nextjs";
+// sirve para refresh de la pagina
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { GithubIcon } from "./icons";
 
-export function AuthButton() {
+export function AuthButton({session}:{session:Session | null}) {
   // esto lo tipa pq es ts
-  const [session, setSession] = useState<Session | null>(null);
+  // const [session, setSession] = useState<Session | null>(null);
+  const router = useRouter();
   const supabase = createClientComponentClient();
 
   const handleSingIn = async () => {
@@ -25,15 +28,8 @@ export function AuthButton() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+    router.refresh();
   };
-
-  useEffect(() => {
-    const getSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setSession(data.session);
-    };
-    getSession();
-  }, []);
 
   return (
     <header>
